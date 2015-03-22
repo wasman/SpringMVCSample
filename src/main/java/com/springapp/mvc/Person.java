@@ -2,6 +2,9 @@ package com.springapp.mvc;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import java.util.Date;
+import java.util.UUID;
+
 public class Person {
 
     @NotEmpty(message = "Name is mandatory")
@@ -9,6 +12,9 @@ public class Person {
 
     @NotEmpty(message = "Email is mandatory")
     private String email;
+
+    private Date birthDate;
+    private UUID uuid;
 
     public String getName() {
         return name;
@@ -26,4 +32,30 @@ public class Person {
         this.email = email;
     }
 
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Person{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", email='").append(email).append('\'');
+        sb.append(", birthDate=").append(birthDate);
+        sb.append(", uuid=").append(uuid);
+        sb.append('}');
+        return sb.toString();
+    }
 }
