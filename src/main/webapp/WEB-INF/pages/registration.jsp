@@ -3,7 +3,7 @@
 <html>
 <body/>
 <h1>Registration Form</h1>
-<form:form method="POST" commandName="personForm" action="/registration/registerPerson">
+<form:form method="POST" commandName="personForm" action="/registration/registerPersonDAsync">
     <br><form:errors path="name" cssStyle="color: red"/> <br/>
     Name: <br/> <form:input path="name"/><br/>
     <br><form:errors path="email" cssStyle="color: red"/> <br/>

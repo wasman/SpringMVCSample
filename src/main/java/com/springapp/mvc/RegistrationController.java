@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
@@ -19,6 +21,9 @@ import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Controller
 public class RegistrationController {
@@ -63,13 +68,73 @@ public class RegistrationController {
         return "redirect:/helloUser/" + person.getName();
     }
 
-//    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Date is wrong")
+    @RequestMapping(value = "/registration/registerPersonAsync", method = RequestMethod.POST)
+    public WebAsyncTask<String> registerPersonAsync(
+            @ModelAttribute("personForm")
+            @Valid
+            final Person person,
+            final Errors errors,
+            @CookieValue(value = "uuid")
+            final String uuid
+    ) throws PersonRegisterException {
+
+        return new WebAsyncTask<>(new Callable<String>() {
+
+            @Override
+            public String call() throws Exception {
+                if (errors.hasErrors()) {
+                    return "/registration";
+                }
+                if (person.getBirthDate().after(new Date())) {
+                    throw new PersonRegisterException(uuid);
+                }
+                person.setUuid(UUID.fromString(uuid));
+
+                System.out.println("User registered " + person);
+                return "redirect:/helloUser/" + person.getName();
+            }
+        });
+
+    }
+
+    @RequestMapping(value = "/registration/registerPersonDAsync", method = RequestMethod.POST)
+    public DeferredResult<String> registerPersonDAsync(
+            @ModelAttribute("personForm")
+            @Valid
+            final Person person,
+            final Errors errors,
+            @CookieValue(value = "uuid")
+            final String uuid
+    ) throws PersonRegisterException {
+        final DeferredResult<String> task = new DeferredResult<>();
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(new Runnable() {
+
+            @Override
+            public void run() {
+                if (errors.hasErrors()) {
+                    task.setResult("/registration");
+                }
+                if (person.getBirthDate().after(new Date())) {
+                    task.setErrorResult(new PersonRegisterException(uuid));
+                }
+                person.setUuid(UUID.fromString(uuid));
+
+                task.setResult("redirect:/helloUser/" + person.getName());
+                System.out.println("User registered " + person);
+            }
+        });
+
+        return task;
+    }
+
+    //    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Date is wrong")
     @ExceptionHandler(PersonRegisterException.class)
     public ModelAndView handlePersonRegisterException(PersonRegisterException ex) {
 
         ModelAndView modelMap = new ModelAndView();
         System.out.println(ex.getUuid());
-        modelMap.addObject("uuid",ex.getUuid());
+        modelMap.addObject("uuid", ex.getUuid());
         modelMap.setViewName("registration_error");
         return modelMap;
     }
