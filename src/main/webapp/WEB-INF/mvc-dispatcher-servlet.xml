@@ -1,9 +1,8 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+<beans xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
@@ -59,7 +58,7 @@
     </mvc:interceptors>
 
     <bean id="messageSource"
-    class="org.springframework.context.support.ResourceBundleMessageSource">
+          class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basenames">
             <list>
                 <value>messages</value>
@@ -73,9 +72,64 @@
     </bean>
 
 
-
     <!--<bean id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver">-->
 
     <!--</bean>-->
 
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/springData"/>
+        <property name="username" value="root"/>
+        <property name="password" value=""/>
+    </bean>
+
+    <bean id="hibernate4AnnotatedSessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan">
+            <list>
+                <value>com.springapp.mvc.orm</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.current_session_context_class">thread</prop>
+                <prop key="hibernate.show_sql">false</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <bean id="personDAO" class="com.springapp.mvc.orm.PersonDAOImpl">
+        <constructor-arg ref="hibernate4AnnotatedSessionFactory"/>
+    </bean>
+
+    <bean id="personService" class="com.springapp.mvc.orm.PersonServiceImpl">
+        <constructor-arg ref="personDAO"/>
+        <constructor-arg ref="transactionManager"/>
+    </bean>
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory"/>
+    </bean>
+
+    <!--<tx:annotation-driven/>-->
+
+    <!--<aop:config>-->
+    <!--<aop:pointcut id="personServiceMethods"-->
+    <!--expression="execution(* com.springapp.mvc.orm.PersonService.*(..))"/>-->
+    <!--<aop:advisor advice-ref="txAdvice" pointcut-ref="personServiceMethods"/>-->
+    <!--</aop:config>-->
+
+    <!--<tx:advice id="txAdvice" transaction-manager="transactionManager">-->
+    <!--<tx:attributes>-->
+    <!--<tx:method name="list*" propagation="REQUIRED"/>-->
+    <!--<tx:method name="save" propagation="REQUIRES_NEW"/>-->
+    <!--<tx:method name="*" propagation="SUPPORTS" read-only="true"/>-->
+    <!--</tx:attributes>-->
+    <!--</tx:advice>-->
 </beans>

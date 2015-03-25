@@ -1,5 +1,7 @@
 package com.springapp.mvc;
 
+import com.springapp.mvc.orm.PersonService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
@@ -29,6 +32,9 @@ import java.util.concurrent.Executors;
 public class RegistrationController {
 
     private static final String EMPTY_STRING = "";
+
+    @Autowired
+    private PersonService service;
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String register(
@@ -55,15 +61,26 @@ public class RegistrationController {
             @Valid
             Person person,
             Errors errors,
-            @CookieValue(value = "uuid") String uuid) throws PersonRegisterException {
+            @CookieValue(value = "uuid") String uuid,
+            HttpServletRequest request
+    ) throws PersonRegisterException {
         if (errors.hasErrors()) {
             return "/registration";
         }
         if (person.getBirthDate().after(new Date())) {
             throw new PersonRegisterException(uuid);
         }
-        person.setUuid(UUID.fromString(uuid));
 
+        person.setUuid(UUID.fromString(uuid));
+        com.springapp.mvc.orm.Person personTosave = new com.springapp.mvc.orm.Person();
+        personTosave.setName(person.getName());
+        personTosave.setEmail(person.getEmail());
+        personTosave.setUuid(uuid);
+        personTosave.setBirthDate(person.getBirthDate());
+        String countrey = request.getLocale().getDisplayCountry();
+        personTosave.setCountry(countrey);
+
+        service.save(personTosave);
         System.out.println("User registered " + person);
         return "redirect:/helloUser/" + person.getName();
     }
