@@ -8,4 +8,7 @@ public interface PersonDAO {
 
     @SuppressWarnings("unchecked")
     List<Person> list();
+
+    @SuppressWarnings("unchecked")
+    Person getPerson(String email);
 }

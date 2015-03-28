@@ -1,6 +1,7 @@
 package com.springapp.mvc;
 
 import com.springapp.mvc.orm.PersonService;
+import com.springapp.mvc.orm.PersonSessions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -71,17 +72,23 @@ public class RegistrationController {
             throw new PersonRegisterException(uuid);
         }
 
-        person.setUuid(UUID.fromString(uuid));
-        com.springapp.mvc.orm.Person personTosave = new com.springapp.mvc.orm.Person();
-        personTosave.setName(person.getName());
-        personTosave.setEmail(person.getEmail());
-        personTosave.setUuid(uuid);
-        personTosave.setBirthDate(person.getBirthDate());
-        String countrey = request.getLocale().getDisplayCountry();
-        personTosave.setCountry(countrey);
+        String email = person.getEmail();
+        com.springapp.mvc.orm.Person servicePerson = service.getPerson(email);
 
-        service.save(personTosave);
-        System.out.println("User registered " + person);
+        if (servicePerson == null) {
+            servicePerson = new com.springapp.mvc.orm.Person();
+
+            person.setUuid(UUID.fromString(uuid));
+            servicePerson.setName(person.getName());
+            servicePerson.setEmail(email);
+            servicePerson.setBirthDate(person.getBirthDate());
+            String countrey = request.getLocale().getDisplayCountry();
+            servicePerson.setCountry(countrey);
+        }
+
+        servicePerson.getPersonSessions().add(new PersonSessions(uuid));
+        service.save(servicePerson);
+        System.out.println("User registered " + servicePerson);
         return "redirect:/helloUser/" + person.getName();
     }
 

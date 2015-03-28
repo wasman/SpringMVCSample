@@ -1,12 +1,16 @@
 package com.springapp.mvc.orm;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "Person")
@@ -19,12 +23,16 @@ public class Person {
 
     private String name;
 
+    @Column(unique = true)
     private String email;
 
     private String country;
 
-    private String uuid;
     private Date birthDate;
+
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, targetEntity = PersonSessions.class)
+    private Set<PersonSessions> personSessions = new HashSet<>();
+
 
     public int getId() {
         return id;
@@ -58,20 +66,20 @@ public class Person {
         this.email = email;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
     public Date getBirthDate() {
         return birthDate;
     }
 
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public Set<PersonSessions> getPersonSessions() {
+        return personSessions;
+    }
+
+    public void setPersonSessions(Set<PersonSessions> personSessions) {
+        this.personSessions = personSessions;
     }
 
     @Override
@@ -81,9 +89,50 @@ public class Person {
         sb.append(", name='").append(name).append('\'');
         sb.append(", email='").append(email).append('\'');
         sb.append(", country='").append(country).append('\'');
-        sb.append(", uuid='").append(uuid).append('\'');
         sb.append(", birthDate=").append(birthDate);
+        sb.append(", personSessions=").append(personSessions);
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Person)) {
+            return false;
+        }
+
+        Person person = (Person) o;
+
+        if (id != person.id) {
+            return false;
+        }
+        if (name != null ? !name.equals(person.name) : person.name != null) {
+            return false;
+        }
+        if (email != null ? !email.equals(person.email) : person.email != null) {
+            return false;
+        }
+        if (country != null ? !country.equals(person.country) : person.country != null) {
+            return false;
+        }
+        if (birthDate != null ? !birthDate.equals(person.birthDate) : person.birthDate != null) {
+            return false;
+        }
+        return !(personSessions != null ? !personSessions.equals(person.personSessions) : person.personSessions != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (country != null ? country.hashCode() : 0);
+        result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
+        result = 31 * result + (personSessions != null ? personSessions.hashCode() : 0);
+        return result;
     }
 }

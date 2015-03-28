@@ -1,11 +1,14 @@
 <beans xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
@@ -109,7 +112,6 @@
 
     <bean id="personService" class="com.springapp.mvc.orm.PersonServiceImpl">
         <constructor-arg ref="personDAO"/>
-        <constructor-arg ref="transactionManager"/>
     </bean>
 
     <bean id="transactionManager"
@@ -117,7 +119,7 @@
         <property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory"/>
     </bean>
 
-    <!--<tx:annotation-driven/>-->
+    <tx:annotation-driven/>
 
     <!--<aop:config>-->
     <!--<aop:pointcut id="personServiceMethods"-->
