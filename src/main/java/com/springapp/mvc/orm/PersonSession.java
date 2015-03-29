@@ -1,34 +1,17 @@
 package com.springapp.mvc.orm;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+public class PersonSession {
 
-@Entity
-@Table(name = "PersonSessions")
-public class PersonSessions {
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "personId")
     private Person person;
 
     private String uuid;
 
-    public PersonSessions() {
+    public PersonSession() {
     }
 
-    public PersonSessions(String uuid) {
+    public PersonSession(String uuid) {
         this.uuid = uuid;
     }
 

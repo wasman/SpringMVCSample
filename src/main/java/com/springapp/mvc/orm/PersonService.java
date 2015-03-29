@@ -8,6 +8,8 @@ public interface PersonService {
 
     void save(Person p);
 
+    void save(PersonSession psession);
+
     @SuppressWarnings("unchecked")
     List<Person> list();
 

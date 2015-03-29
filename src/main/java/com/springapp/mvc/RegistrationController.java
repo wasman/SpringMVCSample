@@ -1,7 +1,8 @@
 package com.springapp.mvc;
 
+import com.springapp.mvc.orm.Person;
 import com.springapp.mvc.orm.PersonService;
-import com.springapp.mvc.orm.PersonSessions;
+import com.springapp.mvc.orm.PersonSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -45,7 +46,7 @@ public class RegistrationController {
         if (uuid.isEmpty()) {
             response.addCookie(new Cookie("uuid", UUID.randomUUID().toString()));
         }
-        model.addAttribute("personForm", new Person());
+        model.addAttribute("personForm", new PersonForMvc());
         return "registration";
     }
 
@@ -72,23 +73,13 @@ public class RegistrationController {
             throw new PersonRegisterException(uuid);
         }
 
-        String email = person.getEmail();
-        com.springapp.mvc.orm.Person servicePerson = service.getPerson(email);
+        PersonSession personSession = new PersonSession(uuid);
+        String country = request.getLocale().getDisplayCountry();
+        person.setCountry(country);
+        personSession.setPerson(person);
+        service.save(personSession);
 
-        if (servicePerson == null) {
-            servicePerson = new com.springapp.mvc.orm.Person();
-
-            person.setUuid(UUID.fromString(uuid));
-            servicePerson.setName(person.getName());
-            servicePerson.setEmail(email);
-            servicePerson.setBirthDate(person.getBirthDate());
-            String countrey = request.getLocale().getDisplayCountry();
-            servicePerson.setCountry(countrey);
-        }
-
-        servicePerson.getPersonSessions().add(new PersonSessions(uuid));
-        service.save(servicePerson);
-        System.out.println("User registered " + servicePerson);
+        System.out.println("User registered " + person);
         return "redirect:/helloUser/" + person.getName();
     }
 
@@ -96,7 +87,7 @@ public class RegistrationController {
     public WebAsyncTask<String> registerPersonAsync(
             @ModelAttribute("personForm")
             @Valid
-            final Person person,
+            final PersonForMvc personForMvc,
             final Errors errors,
             @CookieValue(value = "uuid")
             final String uuid
@@ -109,13 +100,13 @@ public class RegistrationController {
                 if (errors.hasErrors()) {
                     return "/registration";
                 }
-                if (person.getBirthDate().after(new Date())) {
+                if (personForMvc.getBirthDate().after(new Date())) {
                     throw new PersonRegisterException(uuid);
                 }
-                person.setUuid(UUID.fromString(uuid));
+                personForMvc.setUuid(UUID.fromString(uuid));
 
-                System.out.println("User registered " + person);
-                return "redirect:/helloUser/" + person.getName();
+                System.out.println("User registered " + personForMvc);
+                return "redirect:/helloUser/" + personForMvc.getName();
             }
         });
 
@@ -125,7 +116,7 @@ public class RegistrationController {
     public DeferredResult<String> registerPersonDAsync(
             @ModelAttribute("personForm")
             @Valid
-            final Person person,
+            final PersonForMvc personForMvc,
             final Errors errors,
             @CookieValue(value = "uuid")
             final String uuid
@@ -139,13 +130,13 @@ public class RegistrationController {
                 if (errors.hasErrors()) {
                     task.setResult("/registration");
                 }
-                if (person.getBirthDate().after(new Date())) {
+                if (personForMvc.getBirthDate().after(new Date())) {
                     task.setErrorResult(new PersonRegisterException(uuid));
                 }
-                person.setUuid(UUID.fromString(uuid));
+                personForMvc.setUuid(UUID.fromString(uuid));
 
-                task.setResult("redirect:/helloUser/" + person.getName());
-                System.out.println("User registered " + person);
+                task.setResult("redirect:/helloUser/" + personForMvc.getName());
+                System.out.println("User registered " + personForMvc);
             }
         });
 

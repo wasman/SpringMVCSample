@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class name="com.springapp.mvc.orm.Person" table="Person">
+        <meta attribute="class-description">
+            This class contains the person detail.
+        </meta>
+        <id name="id" type="int" column="id">
+            <generator class="identity"/>
+        </id>
+        <property name="name" column="name" type="string"/>
+        <property name="country" column="country" type="string"/>
+        <property name="email" column="email" type="string" unique="true"
+                  unique-key="un_email"/>
+        <property name="birthDate" column="birthDate" type="date"/>
+    </class>
+
+
+    <class name="com.springapp.mvc.orm.PersonSession" table="PersonSession">
+        <meta attribute="class-description">
+            This class contains the person`s sessions.
+        </meta>
+        <id name="id" type="int" column="id">
+            <generator class="identity"/>
+        </id>
+        <property name="uuid" column="uuid" type="string"
+                  unique-key="AK_UUID_PERON_ID"/>
+        <many-to-one name="person" column="personId"
+                     foreign-key="fk_person_id" unique-key="AK_UUID_PERON_ID"
+                     class="com.springapp.mvc.orm.Person"
+                     not-null="true" cascade="all"/>
+    </class>
+
+
+</hibernate-mapping>

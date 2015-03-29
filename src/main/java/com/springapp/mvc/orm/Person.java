@@ -1,38 +1,21 @@
 package com.springapp.mvc.orm;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "Person")
 public class Person {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String name;
 
-    @Column(unique = true)
     private String email;
 
     private String country;
 
     private Date birthDate;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, targetEntity = PersonSessions.class)
-    private Set<PersonSessions> personSessions = new HashSet<>();
-
+    private Set<PersonSession> personSessions;
 
     public int getId() {
         return id;
@@ -74,11 +57,11 @@ public class Person {
         this.birthDate = birthDate;
     }
 
-    public Set<PersonSessions> getPersonSessions() {
+    public Set<PersonSession> getPersonSessions() {
         return personSessions;
     }
 
-    public void setPersonSessions(Set<PersonSessions> personSessions) {
+    public void setPersonSessions(Set<PersonSession> personSessions) {
         this.personSessions = personSessions;
     }
 

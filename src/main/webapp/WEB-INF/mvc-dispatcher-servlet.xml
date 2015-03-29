@@ -91,35 +91,35 @@
     <bean id="hibernate4AnnotatedSessionFactory"
           class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="packagesToScan">
+        <property name="mappingResources">
             <list>
-                <value>com.springapp.mvc.orm</value>
+                <value>Registration.hbm.xml</value>
             </list>
         </property>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
                 <prop key="hibernate.current_session_context_class">thread</prop>
-                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.show_sql">true</prop>
             </props>
         </property>
     </bean>
 
 
-    <bean id="personDAO" class="com.springapp.mvc.orm.PersonDAOImpl">
-        <constructor-arg ref="hibernate4AnnotatedSessionFactory"/>
-    </bean>
+    <!--<bean id="personDAO" class="com.springapp.mvc.orm.PersonDAOImpl">-->
+    <!--<constructor-arg ref="hibernate4AnnotatedSessionFactory"/>-->
+    <!--</bean>-->
 
-    <bean id="personService" class="com.springapp.mvc.orm.PersonServiceImpl">
-        <constructor-arg ref="personDAO"/>
-    </bean>
+    <!--<bean id="personService" class="com.springapp.mvc.orm.PersonServiceImpl">-->
+    <!--<constructor-arg ref="personDAO"/>-->
+    <!--</bean>-->
 
     <bean id="transactionManager"
           class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory"/>
     </bean>
 
-    <tx:annotation-driven/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!--<aop:config>-->
     <!--<aop:pointcut id="personServiceMethods"-->

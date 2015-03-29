@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import java.util.Date;
 import java.util.UUID;
 
-public class Person {
+public class PersonForMvc {
 
     @NotEmpty(message = "Name is mandatory")
     private String name;

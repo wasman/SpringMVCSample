@@ -2,7 +2,7 @@
 <%@ page session="false" %>
 <html>
 <body/>
-<h1>Registration Form</h1>
+<h1>Registration Form with Session</h1>
 <form:form method="POST" commandName="personForm" action="/registration/registerPerson">
     <br><form:errors path="name" cssStyle="color: red"/> <br/>
     Name: <br/> <form:input path="name"/><br/>
