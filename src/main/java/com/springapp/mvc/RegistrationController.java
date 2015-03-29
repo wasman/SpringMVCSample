@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -73,11 +74,15 @@ public class RegistrationController {
             throw new PersonRegisterException(uuid);
         }
 
-        PersonSession personSession = new PersonSession(uuid);
         String country = request.getLocale().getDisplayCountry();
         person.setCountry(country);
-        personSession.setPerson(person);
-        service.save(personSession);
+
+        PersonSession personSession = new PersonSession(uuid);
+        HashSet<PersonSession> sessions = new HashSet<>();
+        sessions.add(personSession);
+        person.setPersonSessions(sessions);
+
+        service.save(person);
 
         System.out.println("User registered " + person);
         return "redirect:/helloUser/" + person.getName();

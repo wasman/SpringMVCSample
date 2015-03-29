@@ -17,6 +17,10 @@
         <property name="email" column="email" type="string" unique="true"
                   unique-key="un_email"/>
         <property name="birthDate" column="birthDate" type="date"/>
+        <set name="personSessions" cascade="all" lazy="true" inverse="true">
+            <key column="personId"/>
+            <one-to-many class="com.springapp.mvc.orm.PersonSession"/>
+        </set>
     </class>
 
 
@@ -29,6 +33,7 @@
         </id>
         <property name="uuid" column="uuid" type="string"
                   unique-key="AK_UUID_PERON_ID"/>
+
         <many-to-one name="person" column="personId"
                      foreign-key="fk_person_id" unique-key="AK_UUID_PERON_ID"
                      class="com.springapp.mvc.orm.Person"

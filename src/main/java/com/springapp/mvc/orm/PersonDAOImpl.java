@@ -6,11 +6,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional
 @Repository
 public class PersonDAOImpl implements PersonDAO {
 
@@ -24,7 +22,8 @@ public class PersonDAOImpl implements PersonDAO {
     @Override
     public void save(Person person) {
         Session session = sessionFactory.openSession();
-        session.save(person);
+        session.saveOrUpdate(person);
+        session.flush();
     }
 
     @Override
@@ -63,7 +62,7 @@ public class PersonDAOImpl implements PersonDAO {
         Session session = sessionFactory.openSession();
         Criteria cr = session.createCriteria(PersonSession.class);
         cr.add(Restrictions.eq("uuid", personSession.getUuid()));
-        cr.add(Restrictions.eq("person", personSession.getPerson()));
+//        cr.add(Restrictions.eq("person", personSession.getPerson()));
 
         PersonSession existing = (PersonSession) cr.uniqueResult();
 
