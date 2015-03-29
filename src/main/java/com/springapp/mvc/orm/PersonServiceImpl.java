@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,35 +20,21 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public void save(Person person) {
-        Set<PersonSession> servicePersonSessions = new HashSet<>();
         Set<PersonSession> personSessions = person.getPersonSessions();
         Person servicePerson = dao.getPerson(person.getEmail());
         if (servicePerson == null) {
-            servicePerson = person;
             System.out.println("# Using new person and new Session");
         }
         else {
             System.out.println("# Using existing person");
-            servicePerson.setBirthDate(person.getBirthDate());
-            servicePerson.setCountry(person.getCountry());
-            servicePerson.setName(person.getName());
-            for (PersonSession session : personSessions) {
-                PersonSession localSession = dao.getPersonSession(session);
-                if (localSession == null) {
-                    localSession = session;
-                    System.out.println("# Using new session");
-                }
-                else {
-                    System.out.println("# Using existing session");
-                }
-                servicePersonSessions.add(localSession);
+            person.setId(servicePerson.getId());
+            for (PersonSession local : personSessions) {
+                local.setPerson(person);
             }
         }
+        System.out.println("#$ saving " + person);
 
-        System.out.println("#$ saving " + servicePersonSessions);
-        System.out.println("#$ saving " + servicePerson);
-
-        dao.save(servicePerson);
+        dao.save(person);
     }
 
     @Override
