@@ -3,9 +3,6 @@
   <component name="FacetManager">
     <facet type="web" name="Web">
       <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml" />
-        </descriptors>
         <webroots>
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
@@ -16,7 +13,12 @@
       </configuration>
     </facet>
     <facet type="Spring" name="Spring">
-      <configuration />
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/com/springapp/ws/AppWebConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/springapp/ws/AppWebSocketConfig.java</file>
+        </fileset>
+      </configuration>
     </facet>
     <facet type="JRebel" name="JRebel">
       <configuration>
@@ -29,14 +31,6 @@
         <option name="secure" value="true" />
         <option name="url" />
         <option name="xmlDir" />
-      </configuration>
-    </facet>
-    <facet type="hibernate" name="Hibernate">
-      <configuration>
-        <datasource-map>
-          <unit-entry name="hibernate4AnnotatedSessionFactory" value="d9a36a6f-97a1-4e86-87a5-cc5f3b2c2b09" />
-        </datasource-map>
-        <naming-strategy-map />
       </configuration>
     </facet>
   </component>
@@ -52,6 +46,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 7.0.56" level="application_server_libraries" />
+    <orderEntry type="library" name="Spring Data JPA-1.3.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:4.1.5.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-web:4.1.5.RELEASE" level="project" />
@@ -96,6 +91,10 @@
     <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.10" level="project" />
-    <orderEntry type="library" name="Spring Data JPA-1.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-messaging:4.1.5.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-websocket:4.1.5.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.5.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.5.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.5.1" level="project" />
   </component>
 </module>

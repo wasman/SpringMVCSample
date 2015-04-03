@@ -2,7 +2,9 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
        xmlns="http://www.springframework.org/schema/beans"
+
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
@@ -10,7 +12,10 @@
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket.xsd
+                ">
 
     <context:component-scan base-package="com.springapp.mvc"/>
 
@@ -122,6 +127,46 @@
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
+    <websocket:handlers>
+        <websocket:mapping path="/echo" handler="myHandler"/>
+        <!--<websocket:handshake-handler ref="handshakeHandler"/>-->
+        <websocket:handshake-interceptors>
+            <bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"/>
+        </websocket:handshake-interceptors>
+        <websocket:sockjs/>
+    </websocket:handlers>
+
+    <websocket:message-broker application-destination-prefix="/app">
+        <websocket:stomp-endpoint path="/portfolio">
+            <websocket:sockjs/>
+        </websocket:stomp-endpoint>
+        <websocket:simple-broker prefix="/queue, /topic"/>
+    </websocket:message-broker>
+
+    <bean id="myHandler" class="com.springapp.ws.RegistrationHandler"/>
+
+    <bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
+        <property name="maxTextMessageBufferSize" value="8192"/>
+        <property name="maxBinaryMessageBufferSize" value="8192"/>
+    </bean>
+
+    <!--<bean id="handshakeHandler" class="org.springframework.web.socket.server.support.DefaultHandshakeHandler">-->
+    <!--<constructor-arg ref="upgradeStrategy"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="upgradeStrategy" class="org.springframework.web.socket.server.jetty.JettyRequestUpgradeStrategy">-->
+    <!--<constructor-arg ref="serverFactory"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="serverFactory" class="org.eclipse.jetty...WebSocketServerFactory">-->
+    <!--<constructor-arg>-->
+    <!--<bean class="org.eclipse.jetty...WebSocketPolicy">-->
+    <!--<constructor-arg value="SERVER"/>-->
+    <!--<property name="inputBufferSize" value="8092"/>-->
+    <!--<property name="idleTimeout" value="600000"/>-->
+    <!--</bean>-->
+    <!--</constructor-arg>-->
+    <!--</bean>-->
     <!--<aop:config>-->
     <!--<aop:pointcut id="personServiceMethods"-->
     <!--expression="execution(* com.springapp.mvc.orm.PersonService.*(..))"/>-->
